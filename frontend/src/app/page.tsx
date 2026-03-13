@@ -10,6 +10,7 @@ type AnalysisResponse = {
   strengths: string[];
   weaknesses: string[];
   next_steps: string[];
+  video_id: string | null;
 };
 
 export default function Home() {
@@ -83,6 +84,11 @@ export default function Home() {
             <div>
               <h2 className="text-2xl font-semibold">{result.video_title}</h2>
               <p className="text-gray-600">{result.channel_name}</p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold">Video ID</h3>
+              <p className="text-sm text-gray-700">{result.video_id ?? "Not found"}</p>
             </div>
 
             <div>

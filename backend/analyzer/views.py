@@ -4,6 +4,8 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+# url extraction
+from .utils import extract_video_id
 
 
 @csrf_exempt
@@ -15,11 +17,13 @@ def analyze_video(request):
     try:
         body = json.loads(request.body)
         url = body.get("url")
+        video_id = extract_video_id(url)
     except:
         return JsonResponse({"error": "Invalid JSON"}, status=400)
 
     return JsonResponse({
         "submitted_url": url,
+        "video_id": video_id,
         "video_title": "Mock Video Title",
         "channel_name": "Mock Channel",
         "summary": "This is a mock AI analysis response.",
