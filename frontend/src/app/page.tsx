@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { FormEvent, useState } from "react";
 
 type AnalysisResponse = {
@@ -18,17 +19,73 @@ type AnalysisResponse = {
   views?: string;
   likes?: string;
   comments?: string;
+  viral_score?: number;
   engagement_score?: number;
   seo_score?: number;
-  title_score?: number;
-  viral_score?: number;
 };
+
+type ScoreCardProps = {
+  label: string;
+  value?: number;
+};
+
+function getScoreStyles(score?: number) {
+  if (score === undefined) {
+    return "border-gray-200 bg-white text-gray-900";
+  }
+
+  if (score >= 75) {
+    return "border-green-200 bg-green-50 text-green-900";
+  }
+
+  if (score >= 50) {
+    return "border-yellow-200 bg-yellow-50 text-yellow-900";
+  }
+
+  return "border-red-200 bg-red-50 text-red-900";
+}
+
+function ScoreCard({ label, value }: ScoreCardProps) {
+  return (
+    <div className={`border p-5 shadow-sm ${getScoreStyles(value)} rounded-xl`}>
+      <p className="text-sm font-medium opacity-80">{label}</p>
+      <p className="mt-2 text-3xl font-bold">
+        {value !== undefined && value !== null ? value : "--"}
+      </p>
+    </div>
+  );
+}
+
+function formatNumber(value?: string) {
+  if (!value) return "--";
+  const num = Number(value);
+  if (Number.isNaN(num)) return value;
+  return num.toLocaleString();
+}
+
+function formatDate(value?: string) {
+  if (!value) return "--";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
 
 export default function Home() {
   const [url, setUrl] = useState("");
   const [result, setResult] = useState<AnalysisResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const resetAnalyzer = () => {
+    setUrl("");
+    setResult(null);
+    setError("");
+    setLoading(false);
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -63,169 +120,269 @@ export default function Home() {
     }
   };
 
+  const showEmptyState = !loading && !result;
+
   return (
-    <main className="min-h-screen p-8">
-      <div className="mx-auto max-w-3xl">
-        <h1 className="mb-2 text-3xl font-bold">YouTube AI Analyzer</h1>
-        <p className="mb-6 text-gray-600">
-          Paste a YouTube URL to analyze a single video.
-        </p>
+    <main className="min-h-screen bg-[#f7f7f8] text-gray-900">
+      <div className="flex min-h-screen">
+        <aside className="w-36 border-r border-gray-200 bg-[#f1f1f2] p-0">
+          <div className="flex h-full flex-col">
+            <button onClick={resetAnalyzer} className="flex h-36 w-36 items-center justify-center border-b border-gray-200 bg-[#0f8c8d] text-white">
+              <span className="text-xl">▶</span>
+            </button>
 
-        <form onSubmit={handleSubmit} className="mb-8 space-y-4">
-          <input
-            type="text"
-            placeholder="Enter YouTube URL"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            className="w-full rounded border px-4 py-3"
-          />
+            <button className="flex h-36 w-36 items-center justify-center border-b border-gray-200 bg-white text-gray-900">
+              <span className="text-xl">Coming Soon</span>
+            </button>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="rounded bg-black px-5 py-3 text-white disabled:opacity-50"
-          >
-            {loading ? "Analyzing..." : "Analyze Video"}
-          </button>
-        </form>
-
-        {error && (
-          <div className="mb-4 rounded border border-red-300 bg-red-50 p-4 text-red-700">
-            {error}
+            <button className="flex h-36 w-36 items-center justify-center border-b border-gray-200 bg-white text-gray-900">
+              <span className="text-xl">Privacy Policy</span>
+            </button>
           </div>
-        )}
+        </aside>
 
-        {result && (
-          <div className="space-y-4 rounded border p-6">
-            <div>
-              <h2 className="text-2xl font-semibold">
-                {result.video_title || "Untitled Video"}
-              </h2>
-              <p className="text-gray-600">
-                {result.channel_name || "Unknown Channel"}
-              </p>
-            </div>
+        <section className="flex-1 p-8">
+          <div className="mx-auto max-w-6xl">
+            {showEmptyState && (
+              <div className="flex min-h-[80vh] flex-col items-center justify-center">
+                <div className="mb-8 text-center">
+                  <div className="mx-auto mb-6">
+                    <div className="mx-auto mb-6 flex justify-center">
+                      <Image
+                        src="/YouRise1.png"
+                        alt="YouRise logo"
+                        width={600}
+                        height={180}
+                        priority
+                        className="h-auto w-[400px] md:w-[480px]"
+                      />
+                    </div>
+                  </div>
 
-            <div>
-              <h3 className="font-semibold">Video ID</h3>
-              <p className="text-sm text-gray-700">
-                {result.video_id ?? "Not found"}
-              </p>
-            </div>
+                  <p className="mt-3 text-base text-gray-500">
+                    Paste a YouTube link to analyze performance, metadata, and AI insights.
+                  </p>
+                </div>
 
-            <div>
-              <h3 className="font-semibold">Submitted URL</h3>
-              <p className="break-all text-sm text-gray-700">
-                {result.submitted_url}
-              </p>
-            </div>
+                <form onSubmit={handleSubmit} className="w-full max-w-3xl">
+                  <div className="flex items-center gap-3 border border-gray-200 bg-white p-3 shadow-sm rounded-full">
+                    <input
+                      type="text"
+                      placeholder="Paste a YouTube URL..."
+                      value={url}
+                      onChange={(e) => setUrl(e.target.value)}
+                      className="flex-1 bg-transparent px-3 py-2 text-base outline-none"
+                    />
+                    <button
+                      type="submit"
+                      disabled={loading || !url.trim()}
+                      className="rounded-full bg-gray-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Analyze
+                    </button>
+                  </div>
+                </form>
 
-            {(result.engagement_score !== undefined ||
-              result.seo_score !== undefined ||
-              result.title_score !== undefined || result.viral_score !== undefined) && (
-              <div>
-                <h3 className="font-semibold">Scores</h3>
-                <ul className="list-disc pl-6">
-                  {result.viral_score !== undefined && (
-                  <li>Viral Score: {result.viral_score}</li>
+                {error && (
+                  <div className="mt-6 w-full max-w-3xl border border-red-200 bg-red-50 p-4 text-red-700 shadow-sm rounded-xl">
+                    {error}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {loading && (
+              <div className="flex min-h-[80vh] flex-col items-center justify-center">
+                <div className="w-full max-w-3xl border border-gray-200 bg-white p-10 text-center shadow-sm rounded-2xl">
+                  <div className="mx-auto mb-6">
+                    <Image
+                      src="/YouRise.png"
+                      alt="YouRise logo"
+                      width={260}
+                      height={78}
+                      priority
+                      className="mx-auto h-auto w-[220px] animate-pulse"
+                    />
+                  </div>
+                  <h2 className="text-2xl font-semibold">Analyzing video...</h2>
+                  <p className="mt-3 animate-pulse text-gray-500">
+                    Pulling metadata, calculating scores, and generating AI insights.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {!loading && result && (
+              <div className="space-y-8">
+                <div className="border border-gray-200 bg-white p-8 shadow-sm rounded-2xl">
+                  <div className="mb-6 flex items-start justify-between gap-4">
+                    <div>
+                      <h2 className="text-3xl font-bold">
+                        {result.video_title || "Untitled Video"}
+                      </h2>
+                      <p className="mt-2 text-lg text-gray-500">
+                        {result.channel_name || "Unknown Channel"}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={resetAnalyzer}
+                      className="border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 rounded-lg"
+                    >
+                      Analyze New Video
+                    </button>
+                  </div>
+
+                  {result.video_id && (
+                    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-black shadow-sm">
+                      <iframe
+                        className="aspect-video w-full"
+                        src={`https://www.youtube.com/embed/${result.video_id}`}
+                        title="YouTube video player"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
                   )}
-                  {result.engagement_score !== undefined && (
-                    <li>Engagement Score: {result.engagement_score}</li>
-                  )}
-                  {result.seo_score !== undefined && (
-                    <li>SEO Score: {result.seo_score}</li>
-                  )}
-                  {result.title_score !== undefined && (
-                    <li>Title Score: {result.title_score}</li>
-                  )}
-                </ul>
-              </div>
-            )}
 
-            {result.published_at && (
-              <div>
-                <h3 className="font-semibold">Published At</h3>
-                <p>{result.published_at}</p>
-              </div>
-            )}
+                  <div className="mt-6 flex flex-wrap items-center gap-6 text-sm text-gray-700">
+                    <div className="flex items-center gap-2">
+                      <span className="text-base">👁</span>
+                      <span className="font-medium">{formatNumber(result.views)}</span>
+                      <span className="text-gray-500">views</span>
+                    </div>
 
-            {result.duration && (
-              <div>
-                <h3 className="font-semibold">Duration</h3>
-                <p>{result.duration}</p>
-              </div>
-            )}
+                    <div className="flex items-center gap-2">
+                      <span className="text-base">👍</span>
+                      <span className="font-medium">{formatNumber(result.likes)}</span>
+                      <span className="text-gray-500">likes</span>
+                    </div>
 
-            {(result.views || result.likes || result.comments) && (
-              <div>
-                <h3 className="font-semibold">Stats</h3>
-                <ul className="list-disc pl-6">
-                  {result.views && <li>Views: {result.views}</li>}
-                  {result.likes && <li>Likes: {result.likes}</li>}
-                  {result.comments && <li>Comments: {result.comments}</li>}
-                </ul>
-              </div>
-            )}
+                    <div className="flex items-center gap-2">
+                      <span className="text-base">💬</span>
+                      <span className="font-medium">{formatNumber(result.comments)}</span>
+                      <span className="text-gray-500">comments</span>
+                    </div>
+                  </div>
+                </div>
 
-            {result.tags && result.tags.length > 0 && (
-              <div>
-                <h3 className="font-semibold">Tags</h3>
-                <ul className="list-disc pl-6">
-                  {result.tags.map((tag) => (
-                    <li key={tag}>{tag}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  <ScoreCard label="Viral Score" value={result.viral_score} />
+                  <ScoreCard
+                    label="Engagement Score"
+                    value={result.engagement_score}
+                  />
+                  <ScoreCard label="SEO Score" value={result.seo_score} />
+                </div>
 
-            {result.description && (
-              <div>
-                <h3 className="font-semibold">Description</h3>
-                <p className="whitespace-pre-line">{result.description}</p>
-              </div>
-            )}
+                <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+                  <div className="space-y-6 xl:col-span-2">
+                    {result.summary && (
+                      <div className="border border-gray-200 bg-white p-6 shadow-sm rounded-2xl">
+                        <h3 className="text-xl font-semibold">AI Analysis</h3>
+                        <p className="mt-3 whitespace-pre-line text-gray-700">
+                          {result.summary}
+                        </p>
+                      </div>
+                    )}
 
-            {result.summary && (
-              <div>
-                <h3 className="font-semibold">Summary</h3>
-                <p>{result.summary}</p>
-              </div>
-            )}
+                    {result.strengths && result.strengths.length > 0 && (
+                      <div className="border border-gray-200 bg-white p-6 shadow-sm rounded-2xl">
+                        <h3 className="text-xl font-semibold">Strengths</h3>
+                        <ul className="mt-4 list-disc space-y-2 pl-5 text-gray-700">
+                          {result.strengths.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
-            {result.strengths && result.strengths.length > 0 && (
-              <div>
-                <h3 className="font-semibold">Strengths</h3>
-                <ul className="list-disc pl-6">
-                  {result.strengths.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+                    {result.weaknesses && result.weaknesses.length > 0 && (
+                      <div className="border border-gray-200 bg-white p-6 shadow-sm rounded-2xl">
+                        <h3 className="text-xl font-semibold">Weaknesses</h3>
+                        <ul className="mt-4 list-disc space-y-2 pl-5 text-gray-700">
+                          {result.weaknesses.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
-            {result.weaknesses && result.weaknesses.length > 0 && (
-              <div>
-                <h3 className="font-semibold">Weaknesses</h3>
-                <ul className="list-disc pl-6">
-                  {result.weaknesses.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+                    {result.next_steps && result.next_steps.length > 0 && (
+                      <div className="border border-gray-200 bg-white p-6 shadow-sm rounded-2xl">
+                        <h3 className="text-xl font-semibold">Next Steps</h3>
+                        <ul className="mt-4 list-disc space-y-2 pl-5 text-gray-700">
+                          {result.next_steps.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
 
-            {result.next_steps && result.next_steps.length > 0 && (
-              <div>
-                <h3 className="font-semibold">Next Steps</h3>
-                <ul className="list-disc pl-6">
-                  {result.next_steps.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
+                  <div className="space-y-6">
+                    <div className="border border-gray-200 bg-white p-6 shadow-sm rounded-2xl">
+                      <h3 className="text-xl font-semibold">Extra Metadata</h3>
+
+                      <div className="mt-4 space-y-4 text-sm text-gray-700">
+                        <div>
+                          <p className="font-medium text-gray-900">Published At</p>
+                          <p>{formatDate(result.published_at)}</p>
+                        </div>
+
+                        <div>
+                          <p className="font-medium text-gray-900">Duration</p>
+                          <p>{result.duration || "--"}</p>
+                        </div>
+
+                        <div>
+                          <p className="font-medium text-gray-900">Video ID</p>
+                          <p className="break-all">{result.video_id || "--"}</p>
+                        </div>
+
+                        <div>
+                          <p className="font-medium text-gray-900">Submitted URL</p>
+                          <p className="break-all">{result.submitted_url}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {result.tags && result.tags.length > 0 && (
+                      <div className="border border-gray-200 bg-white p-6 shadow-sm rounded-2xl">
+                        <h3 className="text-xl font-semibold">Tags</h3>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {result.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-sm text-gray-700"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {result.description && (
+                      <div className="border border-gray-200 bg-white p-6 shadow-sm rounded-2xl">
+                        <h3 className="text-xl font-semibold">Description</h3>
+                        <p className="mt-4 max-h-80 overflow-auto whitespace-pre-line text-sm text-gray-700">
+                          {result.description}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {error && (
+                  <div className="border border-red-200 bg-red-50 p-4 text-red-700 shadow-sm rounded-xl">
+                    {error}
+                  </div>
+                )}
               </div>
             )}
           </div>
-        )}
+        </section>
       </div>
     </main>
   );

@@ -16,6 +16,10 @@ from .scoring_service import (
     calculate_title_score,
 )
 
+# analyzer
+from .ai_service import generate_video_insights
+import json
+
 
 @csrf_exempt
 def analyze_video(request):
@@ -45,12 +49,10 @@ def analyze_video(request):
 
     # Step 3: calculate scores
     viral_score = calculate_viral_score(
-    metadata.get("views"),
-    metadata.get("likes"),
-    metadata.get("comments"),
+        metadata.get("views"),
+        metadata.get("likes"),
+        metadata.get("comments"),
     )
-
-
 
     engagement_score = calculate_engagement_score(
         metadata.get("views"),
@@ -68,7 +70,6 @@ def analyze_video(request):
         metadata.get("video_title", "")
     )
 
-    # Combine insights
     strengths = seo_strengths + title_strengths
     weaknesses = seo_weaknesses + title_weaknesses
 
@@ -77,19 +78,64 @@ def analyze_video(request):
     if "No tags used" in weaknesses:
         next_steps.append("Add relevant tags to improve discoverability")
 
-    if "Description is too short" in weaknesses:
-        next_steps.append("Expand the description with keywords and context")
+    if "Description is too short" in weaknesses or "Description is missing" in weaknesses:
+        next_steps.append("Expand the description with more context and keywords")
 
-    # Step 4: return full response
+    if "Tags are not reflected in the description" in weaknesses:
+        next_steps.append("Work important tag phrases naturally into the description")
+
+    if (
+        "Metadata alignment is only partial" in weaknesses
+        or "Title keywords are not well supported by tags or description" in weaknesses
+    ):
+        next_steps.append("Align title keywords more closely with tags and description")
+
+    # Step 4: build AI payload
+    ai_payload = {
+        "video_title": metadata.get("video_title"),
+        "channel_name": metadata.get("channel_name"),
+        "description": metadata.get("description"),
+        "tags": metadata.get("tags", []),
+        "published_at": metadata.get("published_at"),
+        "duration": metadata.get("duration"),
+        "views": metadata.get("views"),
+        "likes": metadata.get("likes"),
+        "comments": metadata.get("comments"),
+        "viral_score": viral_score,
+        "engagement_score": engagement_score,
+        "seo_score": seo_score,
+        "title_score": title_score,
+        "strengths_from_rules": strengths,
+        "weaknesses_from_rules": weaknesses,
+        "next_steps_from_rules": next_steps,
+    }
+
+    summary = None
+
+    # Step 5: call AI
+    try:
+        ai_result_raw = generate_video_insights(ai_payload)
+        ai_result = json.loads(ai_result_raw)
+
+        summary = ai_result.get("summary")
+        strengths = ai_result.get("strengths", strengths)
+        weaknesses = ai_result.get("weaknesses", weaknesses)
+        next_steps = ai_result.get("next_steps", next_steps)
+
+    except Exception:
+        summary = "AI insights are temporarily unavailable."
+
+    # Step 6: return final response
     return JsonResponse({
-    "submitted_url": url,
-    "video_id": video_id,
-    **metadata,
-    "viral_score": viral_score,
-    "engagement_score": engagement_score,
-    "seo_score": seo_score,
-    "title_score": title_score,
-    "strengths": strengths,
-    "weaknesses": weaknesses,
-    "next_steps": next_steps,
-})
+        "submitted_url": url,
+        "video_id": video_id,
+        **metadata,
+        "viral_score": viral_score,
+        "engagement_score": engagement_score,
+        "seo_score": seo_score,
+        "title_score": title_score,
+        "summary": summary,
+        "strengths": strengths,
+        "weaknesses": weaknesses,
+        "next_steps": next_steps,
+    })
