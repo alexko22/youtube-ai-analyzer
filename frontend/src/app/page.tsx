@@ -121,23 +121,83 @@ export default function Home() {
   };
 
   const showEmptyState = !loading && !result;
+  const showAnalyzerActive = !result;
 
   return (
     <main className="min-h-screen bg-[#f7f7f8] text-gray-900">
       <div className="flex min-h-screen">
-        <aside className="w-36 border-r border-gray-200 bg-[#f1f1f2] p-0">
-          <div className="flex h-full flex-col">
-            <button onClick={resetAnalyzer} className="flex h-36 w-36 items-center justify-center border-b border-gray-200 bg-[#0f8c8d] text-white">
-              <span className="text-xl">▶</span>
+        <aside className="sticky top-0 h-screen w-36 border-r border-gray-200 bg-[#f1f1f2] p-0">
+          <div className="flex h-screen flex-col justify-between">
+            <div className="flex flex-col">
+            <button
+              onClick={resetAnalyzer}
+              className={`flex h-36 w-36 flex-col items-center justify-center gap-2 border-b border-gray-200 text-gray-600 transition-colors duration-150 ${
+                showAnalyzerActive
+                  ? "bg-[#0f8c8d] text-white"
+                  : "bg-white text-gray-600 hover:bg-[#dff4f4]"
+              }`}
+            >
+              <Image
+                src="/computer.png"
+                alt="Main Analyzer"
+                width={42}
+                height={42}
+                className="h-auto w-10"
+              />
+              <span className="text-[11px] font-medium tracking-wide">
+                Long-form YouTube Analyzer
+              </span>
             </button>
 
-            <button className="flex h-36 w-36 items-center justify-center border-b border-gray-200 bg-white text-gray-900">
-              <span className="text-xl">Coming Soon</span>
+            <button
+              disabled
+              className="flex h-36 w-36 flex-col items-center justify-center gap-2 border-b border-gray-200 bg-white text-gray-400 transition-colors duration-150 hover:bg-gray-100"
+            >
+              <Image
+                src="/phone.png"
+                alt="Main Analyzer"
+                width={42}
+                height={42}
+                className="h-auto w-10"
+              />
+              <span className="text-[11px] font-medium tracking-wide">
+                Short-form Analyzer (Coming Soon)
+              </span>
             </button>
 
-            <button className="flex h-36 w-36 items-center justify-center border-b border-gray-200 bg-white text-gray-900">
-              <span className="text-xl">Privacy Policy</span>
+          
+            </div>
+            <div>
+              <button
+              disabled
+              className="flex h-36 w-36 flex-col items-center justify-center gap-2 border-b border-gray-200 bg-white text-gray-600 transition-colors duration-150 hover:bg-gray-100"
+            >
+              <Image
+                src="/faq.png"
+                alt="Main Analyzer"
+                width={42}
+                height={42}
+                className="h-auto w-10"
+              />
+              <span className="text-[11px] font-medium tracking-wide">
+                FAQ
+              </span>
             </button>
+              <button
+              className="flex h-36 w-36 flex-col items-center justify-center gap-2 border-b border-gray-200 bg-white text-gray-600 transition-colors duration-150 hover:bg-gray-100"
+            >
+              <Image
+                src="/privacy.png"
+                alt="Main Analyzer"
+                width={42}
+                height={42}
+                className="h-auto w-10"
+              />
+              <span className="text-[11px] font-medium tracking-wide">
+                Privacy Policy
+              </span>
+            </button>
+            </div>
           </div>
         </aside>
 
@@ -160,7 +220,7 @@ export default function Home() {
                   </div>
 
                   <p className="mt-3 text-base text-gray-500">
-                    Paste a YouTube link to analyze performance, metadata, and AI insights.
+                    Paste a YouTube link to analyze performance, metadata, SEO, and AI insights.
                   </p>
                 </div>
 
