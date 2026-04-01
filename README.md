@@ -1,4 +1,4 @@
-# YouRise
+# YouRise AI
 
 YouRise is an AI-powered web app that analyzes YouTube videos and provides insights on performance, engagement, and SEO.
 
