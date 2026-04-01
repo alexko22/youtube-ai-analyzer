@@ -16,7 +16,7 @@ Visit the deployed version here: https://youtube-ai-analyzer-theta.vercel.app/
 
 ## Tech Stack
 
-- Frontend: Next.js, TypeScript, Tailwind CSS
+- Frontend: Next.js (React), TypeScript, Tailwind CSS
 - Backend: Django, YouTube Data API, OpenAI API
 
 ## Setup
