@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 type AnalysisResponse = {
@@ -47,7 +48,7 @@ function getScoreStyles(score?: number) {
 
 function ScoreCard({ label, value }: ScoreCardProps) {
   return (
-    <div className={`border p-5 shadow-sm ${getScoreStyles(value)} rounded-xl`}>
+    <div className={`border p-5 shadow-sm ${getScoreStyles(value)} rounded-none`}>
       <p className="text-sm font-medium opacity-80">{label}</p>
       <p className="mt-2 text-3xl font-bold">
         {value !== undefined && value !== null ? value : "--"}
@@ -79,6 +80,8 @@ export default function Home() {
   const [result, setResult] = useState<AnalysisResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const router = useRouter();
 
   const resetAnalyzer = () => {
     setUrl("");
@@ -131,9 +134,11 @@ export default function Home() {
             <div className="flex flex-col">
             <button
               onClick={resetAnalyzer}
-              className={`flex h-36 w-36 flex-col items-center justify-center gap-2 border-b border-gray-200 text-gray-600 transition-colors duration-150 ${
+              className={`flex h-36 w-36 cursor-pointer flex-col items-center justify-center gap-2 border-b border-gray-200 text-gray-600 transition-colors duration-150 ${
                 showAnalyzerActive
                   ? "bg-[#0f8c8d] text-white"
+                  : result
+                  ? "bg-[#ff3131] text-white"
                   : "bg-white text-gray-600 hover:bg-[#dff4f4]"
               }`}
             >
@@ -169,8 +174,8 @@ export default function Home() {
             </div>
             <div>
               <button
-              disabled
-              className="flex h-36 w-36 flex-col items-center justify-center gap-2 border-b border-gray-200 bg-white text-gray-600 transition-colors duration-150 hover:bg-gray-100"
+              onClick={() => router.push("/tos")}
+              className="flex h-36 w-36 cursor-pointer flex-col items-center justify-center gap-2 border-b border-gray-200 bg-white text-gray-600 transition-colors duration-150 hover:bg-gray-100"
             >
               <Image
                 src="/faq.png"
@@ -180,11 +185,12 @@ export default function Home() {
                 className="h-auto w-10"
               />
               <span className="text-[11px] font-medium tracking-wide">
-                FAQ
+                TOS
               </span>
             </button>
               <button
-              className="flex h-36 w-36 flex-col items-center justify-center gap-2 border-b border-gray-200 bg-white text-gray-600 transition-colors duration-150 hover:bg-gray-100"
+              onClick={() => router.push("/privacy")}
+              className="flex h-36 w-36 cursor-pointer flex-col items-center justify-center gap-2 border-b border-gray-200 bg-white text-gray-600 transition-colors duration-150 hover:bg-gray-100"
             >
               <Image
                 src="/privacy.png"
@@ -236,7 +242,7 @@ export default function Home() {
                     <button
                       type="submit"
                       disabled={loading || !url.trim()}
-                      className="rounded-full bg-gray-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-50"
+                      className="rounded-full bg-[#ff3131] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#e62b2b] disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-400"
                     >
                       Analyze
                     </button>
@@ -274,7 +280,7 @@ export default function Home() {
 
             {!loading && result && (
               <div className="space-y-8">
-                <div className="border border-gray-200 bg-white p-8 shadow-sm rounded-2xl">
+                <div className="border border-gray-200 border-t-4 border-t-[#ff3131] bg-white p-8 shadow-sm rounded-none">
                   <div className="mb-6 flex items-start justify-between gap-4">
                     <div>
                       <h2 className="text-3xl font-bold">
@@ -287,7 +293,7 @@ export default function Home() {
 
                     <button
                       onClick={resetAnalyzer}
-                      className="border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 rounded-lg"
+                      className="border border-[#0f8c8d]/30 bg-white px-4 py-2 text-sm font-medium text-[#0f8c8d] shadow-sm transition hover:bg-[#0f8c8d]/5 rounded-none"
                     >
                       Analyze New Video
                     </button>
@@ -307,19 +313,37 @@ export default function Home() {
 
                   <div className="mt-6 flex flex-wrap items-center gap-6 text-sm text-gray-700">
                     <div className="flex items-center gap-2">
-                      <span className="text-base">👁</span>
+                        <Image
+                          src="/views.png"
+                          alt="Views"
+                          width={25}
+                          height={25}
+                          className="opacity-80"
+                        />
                       <span className="font-medium">{formatNumber(result.views)}</span>
                       <span className="text-gray-500">views</span>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className="text-base">👍</span>
+                      <Image
+                          src="/likes.png"
+                          alt="Views"
+                          width={30}
+                          height={30}
+                          className="opacity-80"
+                        />
                       <span className="font-medium">{formatNumber(result.likes)}</span>
                       <span className="text-gray-500">likes</span>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className="text-base">💬</span>
+                      <Image
+                          src="/comments.png"
+                          alt="Views"
+                          width={32}
+                          height={32}
+                          className="opacity-80"
+                        />
                       <span className="font-medium">{formatNumber(result.comments)}</span>
                       <span className="text-gray-500">comments</span>
                     </div>
@@ -338,7 +362,7 @@ export default function Home() {
                 <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
                   <div className="space-y-6 xl:col-span-2">
                     {result.summary && (
-                      <div className="border border-gray-200 bg-white p-6 shadow-sm rounded-2xl">
+                      <div className="border border-gray-200 border-l-4 border-l-[#0f8c8d] bg-white p-6 shadow-sm rounded-none">
                         <h3 className="text-xl font-semibold">AI Analysis</h3>
                         <p className="mt-3 whitespace-pre-line text-gray-700">
                           {result.summary}
@@ -347,7 +371,7 @@ export default function Home() {
                     )}
 
                     {result.strengths && result.strengths.length > 0 && (
-                      <div className="border border-gray-200 bg-white p-6 shadow-sm rounded-2xl">
+                      <div className="border border-gray-200 border-l-4 border-l-[#0f8c8d] bg-white p-6 shadow-sm rounded-none">
                         <h3 className="text-xl font-semibold">Strengths</h3>
                         <ul className="mt-4 list-disc space-y-2 pl-5 text-gray-700">
                           {result.strengths.map((item) => (
@@ -358,7 +382,7 @@ export default function Home() {
                     )}
 
                     {result.weaknesses && result.weaknesses.length > 0 && (
-                      <div className="border border-gray-200 bg-white p-6 shadow-sm rounded-2xl">
+                      <div className="border border-gray-200 border-l-4 border-l-[#ff3131] bg-white p-6 shadow-sm rounded-none">
                         <h3 className="text-xl font-semibold">Weaknesses</h3>
                         <ul className="mt-4 list-disc space-y-2 pl-5 text-gray-700">
                           {result.weaknesses.map((item) => (
@@ -369,7 +393,7 @@ export default function Home() {
                     )}
 
                     {result.next_steps && result.next_steps.length > 0 && (
-                      <div className="border border-gray-200 bg-white p-6 shadow-sm rounded-2xl">
+                      <div className="border border-gray-200 border-l-4 border-l-[#0f8c8d] bg-white p-6 shadow-sm rounded-none">
                         <h3 className="text-xl font-semibold">Next Steps</h3>
                         <ul className="mt-4 list-disc space-y-2 pl-5 text-gray-700">
                           {result.next_steps.map((item) => (
@@ -381,7 +405,7 @@ export default function Home() {
                   </div>
 
                   <div className="space-y-6">
-                    <div className="border border-gray-200 bg-white p-6 shadow-sm rounded-2xl">
+                    <div className="border border-gray-200 border-t-4 border-t-[#0f8c8d] bg-white p-6 shadow-sm rounded-none">
                       <h3 className="text-xl font-semibold">Extra Metadata</h3>
 
                       <div className="mt-4 space-y-4 text-sm text-gray-700">
@@ -408,7 +432,7 @@ export default function Home() {
                     </div>
 
                     {result.tags && result.tags.length > 0 && (
-                      <div className="border border-gray-200 bg-white p-6 shadow-sm rounded-2xl">
+                      <div className="border border-gray-200 border-t-4 border-t-[#ff3131] bg-white p-6 shadow-sm rounded-none">
                         <h3 className="text-xl font-semibold">Tags</h3>
                         <div className="mt-4 flex flex-wrap gap-2">
                           {result.tags.map((tag) => (
@@ -424,7 +448,7 @@ export default function Home() {
                     )}
 
                     {result.description && (
-                      <div className="border border-gray-200 bg-white p-6 shadow-sm rounded-2xl">
+                      <div className="border border-gray-200 border-t-4 border-t-[#0f8c8d] bg-white p-6 shadow-sm rounded-none">
                         <h3 className="text-xl font-semibold">Description</h3>
                         <p className="mt-4 max-h-80 overflow-auto whitespace-pre-line text-sm text-gray-700">
                           {result.description}
