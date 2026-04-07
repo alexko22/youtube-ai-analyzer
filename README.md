@@ -6,7 +6,7 @@ Paste a YouTube URL to receive scores, metadata, and AI-generated recommendation
 
 Visit the deployed version here: https://youtube-ai-analyzer-theta.vercel.app/
 
-**Please note: the backend is hosted using the free version of render and sometimes needs a few minutes to wake up... requests may fail for a minute or two.**
+**Please note:** *the backend is hosted using the free version of render and sometimes needs a few minutes to wake up... requests may fail for a minute or two.*
 
 ## Features
 
