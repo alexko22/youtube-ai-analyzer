@@ -1,3 +1,5 @@
+// page.tsx - main page with working functionality
+
 "use client";
 
 import Image from "next/image";
@@ -132,13 +134,13 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-[#f7f7f8] text-gray-900">
-      <div className="flex min-h-screen">
-        <aside className="sticky top-0 h-screen w-36 border-r border-gray-200 bg-[#f1f1f2] p-0">
-          <div className="flex h-screen flex-col justify-between">
+      <div className="flex min-h-screen flex-col md:flex-row">
+        <aside className="border-b border-gray-200 bg-[#f1f1f2] md:sticky md:top-0 md:h-screen md:w-36 md:border-b-0 md:border-r md:p-0">
+          <div className="flex flex-col md:h-screen md:justify-between">
             <div className="flex flex-col">
             <button
               onClick={resetAnalyzer}
-              className={`flex h-36 w-36 cursor-pointer flex-col items-center justify-center gap-2 border-b border-gray-200 text-gray-600 transition-colors duration-150 ${
+              className={`flex h-24 w-full cursor-pointer flex-col items-center justify-center gap-2 border-b border-gray-200 px-2 text-gray-600 transition-colors duration-150 md:h-36 md:w-36 ${
                 showAnalyzerActive
                   ? "bg-[#0f8c8d] text-white"
                   : result
@@ -160,7 +162,7 @@ export default function Home() {
 
             <button
               disabled
-              className="flex h-36 w-36 flex-col items-center justify-center gap-2 border-b border-gray-200 bg-white text-gray-400 transition-colors duration-150 hover:bg-gray-100"
+              className="flex h-24 w-full flex-col items-center justify-center gap-2 border-b border-gray-200 px-2 bg-white text-gray-400 transition-colors duration-150 hover:bg-gray-100 md:h-36 md:w-36"
             >
               <Image
                 src="/phone.png"
@@ -176,10 +178,10 @@ export default function Home() {
 
           
             </div>
-            <div>
+            <div className="grid grid-cols-2 md:block">
               <button
               onClick={() => router.push("/tos")}
-              className="flex h-36 w-36 cursor-pointer flex-col items-center justify-center gap-2 border-b border-gray-200 bg-white text-gray-600 transition-colors duration-150 hover:bg-gray-100"
+              className="flex h-20 w-full cursor-pointer flex-col items-center justify-center gap-1 border-b border-gray-200 bg-white px-2 text-gray-600 transition-colors duration-150 hover:bg-gray-100 md:h-36 md:w-36 md:gap-2"
             >
               <Image
                 src="/faq.png"
@@ -194,7 +196,7 @@ export default function Home() {
             </button>
               <button
               onClick={() => router.push("/privacy")}
-              className="flex h-36 w-36 cursor-pointer flex-col items-center justify-center gap-2 border-b border-gray-200 bg-white text-gray-600 transition-colors duration-150 hover:bg-gray-100"
+              className="flex h-20 w-full cursor-pointer flex-col items-center justify-center gap-1 border-b border-gray-200 bg-white px-2 text-gray-600 transition-colors duration-150 hover:bg-gray-100 md:h-36 md:w-36 md:gap-2"
             >
               <Image
                 src="/privacy.png"
@@ -211,7 +213,7 @@ export default function Home() {
           </div>
         </aside>
 
-        <section className="flex-1 p-8">
+        <section className="flex-1 p-4 sm:p-6 md:p-8">
           <div className="mx-auto max-w-6xl">
             {showEmptyState && (
               <div className="flex min-h-[80vh] flex-col items-center justify-center">
@@ -224,7 +226,7 @@ export default function Home() {
                         width={600}
                         height={180}
                         priority
-                        className="h-auto w-[400px] md:w-[480px]"
+                        className="h-auto w-[280px] sm:w-[360px] md:w-[480px]"
                       />
                     </div>
                   </div>
@@ -235,7 +237,7 @@ export default function Home() {
                 </div>
 
                 <form onSubmit={handleSubmit} className="w-full max-w-3xl">
-                  <div className="flex items-center gap-3 border border-gray-200 bg-white p-3 shadow-sm rounded-full">
+                  <div className="flex flex-col items-stretch gap-3 rounded-2xl border border-gray-200 bg-white p-3 shadow-sm sm:flex-row sm:items-center sm:rounded-full">
                     <input
                       type="text"
                       placeholder="Paste a YouTube URL..."
@@ -246,7 +248,7 @@ export default function Home() {
                     <button
                       type="submit"
                       disabled={loading || !url.trim()}
-                      className="rounded-full bg-[#ff3131] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#e62b2b] disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-400"
+                      className="w-full rounded-full bg-[#ff3131] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#e62b2b] disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-400 sm:w-auto"
                     >
                       Analyze
                     </button>
@@ -284,10 +286,10 @@ export default function Home() {
 
             {!loading && result && (
               <div className="space-y-8">
-                <div className="border border-gray-200 border-t-4 border-t-[#ff3131] bg-white p-8 shadow-sm rounded-none">
-                  <div className="mb-6 flex items-start justify-between gap-4">
+                <div className="rounded-none border border-gray-200 border-t-4 border-t-[#ff3131] bg-white p-4 shadow-sm sm:p-6 md:p-8">
+                  <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row">
                     <div>
-                      <h2 className="text-3xl font-bold">
+                      <h2 className="text-2xl font-bold sm:text-3xl">
                         {result.video_title || "Untitled Video"}
                       </h2>
                       <p className="mt-2 text-lg text-gray-500">
@@ -297,7 +299,7 @@ export default function Home() {
 
                     <button
                       onClick={resetAnalyzer}
-                      className="border border-[#0f8c8d]/30 bg-white px-4 py-2 text-sm font-medium text-[#0f8c8d] shadow-sm transition hover:bg-[#0f8c8d]/5 rounded-none"
+                      className="w-full border border-[#0f8c8d]/30 bg-white px-4 py-2 text-sm font-medium text-[#0f8c8d] shadow-sm transition hover:bg-[#0f8c8d]/5 rounded-none sm:w-auto"
                     >
                       Analyze New Video
                     </button>
@@ -315,7 +317,7 @@ export default function Home() {
                     </div>
                   )}
 
-                  <div className="mt-6 flex flex-wrap items-center gap-6 text-sm text-gray-700">
+                  <div className="mt-6 grid grid-cols-1 gap-3 text-sm text-gray-700 sm:grid-cols-2 sm:gap-4 lg:flex lg:flex-wrap lg:items-center lg:gap-6">
                     <div className="flex items-center gap-2">
                         <Image
                           src="/views.png"

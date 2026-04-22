@@ -1,3 +1,5 @@
+// main privacy policy page
+
 "use client";
 
 import Image from "next/image";
@@ -9,13 +11,13 @@ export default function PrivacyPage() {
 
   return (
     <main className="min-h-screen bg-[#f7f7f8] text-gray-900">
-      <div className="flex min-h-screen">
-        <aside className="sticky top-0 h-screen w-36 border-r border-gray-200 bg-[#f1f1f2] p-0">
-          <div className="flex h-screen flex-col justify-between">
+      <div className="flex min-h-screen flex-col md:flex-row">
+        <aside className="border-b border-gray-200 bg-[#f1f1f2] md:sticky md:top-0 md:h-screen md:w-36 md:border-b-0 md:border-r md:p-0">
+          <div className="flex flex-col md:h-screen md:justify-between">
             <div className="flex flex-col">
               <Link
                 href="/"
-                className={`flex h-36 w-36 flex-col items-center justify-center gap-2 border-b border-gray-200 transition-colors duration-150 ${
+                className={`flex h-24 w-full flex-col items-center justify-center gap-2 border-b border-gray-200 px-2 transition-colors duration-150 md:h-36 md:w-36 ${
                   pathname === "/"
                     ? "bg-[#0f8c8d] text-white"
                     : "bg-white text-gray-600 hover:bg-[#dff4f4]"
@@ -35,7 +37,7 @@ export default function PrivacyPage() {
 
               <button
                 disabled
-                className="flex h-36 w-36 flex-col items-center justify-center gap-2 border-b border-gray-200 bg-white text-gray-400 transition-colors duration-150 hover:bg-gray-100"
+                className="flex h-24 w-full flex-col items-center justify-center gap-2 border-b border-gray-200 bg-white px-2 text-gray-400 transition-colors duration-150 hover:bg-gray-100 md:h-36 md:w-36"
               >
                 <Image
                   src="/phone.png"
@@ -50,10 +52,10 @@ export default function PrivacyPage() {
               </button>
             </div>
 
-            <div>
+            <div className="grid grid-cols-2 md:block">
               <Link
                 href="/tos"
-                className={`flex h-36 w-36 flex-col items-center justify-center gap-2 border-b border-gray-200 transition-colors duration-150 ${
+                className={`flex h-20 w-full flex-col items-center justify-center gap-1 border-b border-gray-200 px-2 transition-colors duration-150 md:h-36 md:w-36 md:gap-2 ${
                   pathname === "/tos"
                     ? "bg-[#0f8c8d] text-white"
                     : "bg-white text-gray-600 hover:bg-gray-100"
@@ -73,7 +75,7 @@ export default function PrivacyPage() {
 
               <Link
                 href="/privacy"
-                className={`flex h-36 w-36 flex-col items-center justify-center gap-2 border-b border-gray-200 transition-colors duration-150 ${
+                className={`flex h-20 w-full flex-col items-center justify-center gap-1 border-b border-gray-200 px-2 transition-colors duration-150 md:h-36 md:w-36 md:gap-2 ${
                   pathname === "/privacy"
                     ? "bg-[#0f8c8d] text-white"
                     : "bg-white text-gray-600 hover:bg-gray-100"
@@ -94,10 +96,10 @@ export default function PrivacyPage() {
           </div>
         </aside>
 
-        <section className="flex-1 p-8">
+        <section className="flex-1 p-4 sm:p-6 md:p-8">
           <div className="mx-auto max-w-4xl space-y-8">
-            <div className="border border-gray-200 border-t-4 border-t-[#ff3131] bg-white p-8 shadow-sm rounded-none">
-              <h1 className="text-3xl font-bold">Privacy Policy</h1>
+            <div className="rounded-none border border-gray-200 border-t-4 border-t-[#ff3131] bg-white p-5 shadow-sm sm:p-6 md:p-8">
+              <h1 className="text-2xl font-bold sm:text-3xl">Privacy Policy</h1>
               <p className="mt-2 text-gray-500">Effective Date: April 1, 2026</p>
               <p className="mt-4 text-gray-700">
                 This Privacy Policy explains how YouRise AI collects, uses, and

@@ -1,3 +1,5 @@
+# primary scoring function calculations (subject to change)
+
 import math
 import re
 
